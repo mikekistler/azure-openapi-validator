@@ -2033,6 +2033,7 @@ const patchBodyParameters = (parameters, _opts, paths) => {
         return [];
     }
     const path = paths.path || [];
+    const inner = parameters.inner || false;
     const properties = getProperties(parameters.schema);
     const requiredProperties = getRequiredProperties(parameters.schema);
     const errors = [];
@@ -2043,7 +2044,7 @@ const patchBodyParameters = (parameters, _opts, paths) => {
                 path: [...path, "schema"],
             });
         }
-        if (requiredProperties.includes(prop)) {
+        if (!inner && requiredProperties.includes(prop)) {
             errors.push({
                 message: `Properties of a PATCH request body must not be required, property:${prop}.`,
                 path: [...path, "schema"],
@@ -2060,6 +2061,7 @@ const patchBodyParameters = (parameters, _opts, paths) => {
             errors.push(...patchBodyParameters({
                 schema: properties[prop],
                 in: "body",
+                inner: true,
             }, _opts, { path: [...path, "schema", "properties", prop] }));
         }
     }

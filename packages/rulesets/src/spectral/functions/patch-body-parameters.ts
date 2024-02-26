@@ -8,6 +8,10 @@ const patchBodyParameters = (parameters: any, _opts: any, paths: any): IFunction
   }
   const path = paths.path || []
 
+  // Determine if this is an inner object of the patch body.
+  // If so, we skip the check for required properties -- the other checks still apply.
+  const inner = parameters.inner || false
+
   const properties: object = getProperties(parameters.schema)
   const requiredProperties = getRequiredProperties(parameters.schema)
   const errors = []
@@ -18,7 +22,7 @@ const patchBodyParameters = (parameters: any, _opts: any, paths: any): IFunction
         path: [...path, "schema"],
       })
     }
-    if (requiredProperties.includes(prop)) {
+    if (!inner && requiredProperties.includes(prop)) {
       errors.push({
         message: `Properties of a PATCH request body must not be required, property:${prop}.`,
         path: [...path, "schema"],
@@ -38,6 +42,7 @@ const patchBodyParameters = (parameters: any, _opts: any, paths: any): IFunction
           {
             schema: properties[prop],
             in: "body",
+            inner: true,
           },
           _opts,
           { path: [...path, "schema", "properties", prop] }
