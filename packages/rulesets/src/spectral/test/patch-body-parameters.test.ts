@@ -214,6 +214,11 @@ test("PatchBodyParametersSchema should find no errors", () => {
             $ref: "#/definitions/FooProps",
           },
         ],
+        properties: {
+          inner: {
+            $ref: "#/definitions/InnerProps",
+          },
+        },
       },
       FooProps: {
         properties: {
@@ -224,6 +229,14 @@ test("PatchBodyParametersSchema should find no errors", () => {
             type: "string",
           },
         },
+      },
+      InnerProps: {
+        properties: {
+          innerProp0: {
+            type: "string",
+          },
+        },
+        required: ["innerProp0"],
       },
     },
   }
